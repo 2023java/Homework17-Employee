@@ -1,16 +1,18 @@
 package com.example.employee;
 
 import org.springframework.stereotype.Service;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class EmployeeService {
     private static final int MAX_EMPLOYEES = 10;
-    private final List<Employee> employees = new ArrayList<>();
+    private final Map<String, Employee> employees = new HashMap<>();
 
     public void addEmployee(String firstName, String lastName) {
-        if (getEmployeeByFullName(firstName, lastName) != null) {
+        String key = generateKey(firstName, lastName);
+        if (employees.containsKey(key)) {
             throw new EmployeeAlreadyAddedException(firstName, lastName);
         }
 
@@ -19,19 +21,20 @@ public class EmployeeService {
         }
 
         Employee employee = new Employee(firstName, lastName);
-        employees.add(employee);
+        employees.put(key, employee);
     }
 
     public void removeEmployee(String firstName, String lastName) {
-        Employee employee = getEmployeeByFullName(firstName, lastName);
-        if (employee == null) {
+        String key = generateKey(firstName, lastName);
+        if (!employees.containsKey(key)) {
             throw new EmployeeNotFoundException(firstName, lastName);
         }
-        employees.remove(employee);
+        employees.remove(key);
     }
 
     public Employee findEmployee(String firstName, String lastName) {
-        Employee employee = getEmployeeByFullName(firstName, lastName);
+        String key = generateKey(firstName, lastName);
+        Employee employee = employees.get(key);
         if (employee == null) {
             throw new EmployeeNotFoundException(firstName, lastName);
         }
@@ -39,16 +42,11 @@ public class EmployeeService {
     }
 
     public List<Employee> getAllEmployees() {
-        return employees;
+        return List.copyOf(employees.values());
     }
 
-    private Employee getEmployeeByFullName(String firstName, String lastName) {
-        for (Employee employee : employees) {
-            if (employee.getFirstName().equals(firstName) && employee.getLastName().equals(lastName)) {
-                return employee;
-            }
-        }
-        return null;
+    private String generateKey(String firstName, String lastName) {
+        return firstName + " " + lastName;
     }
 }
 
