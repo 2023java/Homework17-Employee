@@ -1,8 +1,11 @@
 package com.example.employee;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.StringUtils.*;
 
 @Service
 public class EmployeeService {
@@ -12,6 +15,11 @@ public class EmployeeService {
 
     public void addEmployee(String firstName, String lastName, double salary, int departmentId) {
         String key = generateKey(firstName, lastName);
+
+        if (!validateInput(firstName,lastName)) {
+            throw new InvalidInputException();
+        }
+
         if (employees.containsKey(key)) {
             throw new EmployeeAlreadyAddedException(firstName, lastName);
         }
@@ -27,6 +35,11 @@ public class EmployeeService {
 
     public void removeEmployee(String firstName, String lastName) {
         String key = generateKey(firstName, lastName);
+
+        if (!validateInput(firstName,lastName)) {
+            throw new InvalidInputException();
+        }
+
         if (!employees.containsKey(key)) {
             throw new EmployeeNotFoundException(firstName, lastName);
         }
@@ -38,6 +51,11 @@ public class EmployeeService {
 
     public Employee findEmployee(String firstName, String lastName) {
         String key = generateKey(firstName, lastName);
+
+        if (!validateInput(firstName,lastName)) {
+            throw new InvalidInputException();
+        }
+
         Employee employee = employees.get(key);
         if (employee == null) {
             throw new EmployeeNotFoundException(firstName, lastName);
@@ -86,6 +104,10 @@ public class EmployeeService {
 
     private String generateKey(String firstName, String lastName) {
         return firstName + " " + lastName;
+    }
+
+    private boolean validateInput (String firstName, String lastName) {
+        return isAlpha(firstName) && isAlpha(lastName);
     }
 }
 
