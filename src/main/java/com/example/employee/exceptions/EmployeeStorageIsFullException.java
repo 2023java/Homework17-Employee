@@ -1,4 +1,4 @@
-package com.example.employee;
+package com.example.employee.exceptions;
 
 public class EmployeeStorageIsFullException extends RuntimeException {
     public EmployeeStorageIsFullException() {

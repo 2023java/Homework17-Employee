@@ -1,4 +1,4 @@
-package com.example.employee;
+package com.example.employee.exceptions;
 
 public class DepartmentNotFoundException extends RuntimeException {
     public DepartmentNotFoundException(int departmentId) {
